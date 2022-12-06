@@ -1,74 +1,92 @@
 @extends('template.layout')
+
 @section('title')
     Siswa
 @endsection
+
 @section('content')
-    <section class="section">
-        <div class="section-header">
-            <h1>Siswa</h1>
-        </div>
+<section class="section">
+    <div class="section-header">
+        <h1>Data Siswa</h1>
+    </div>
 
-       <!-- Data Siswa -->
-        <div class="col-12-col-md-12-col-lg-12">
-            <div class="card">
-                <!-- Judul -->
-                <div class="card-header">
-                   <div class="col-12-col-md-10-col-lg-10">
-                    <h4>Data Siswa</h4>
-                   </div>
-                   <div class="col-12-col-md-2-col-lg-2">
-                    <button type="button" onclick="addForm('{{route('siswa.store')}}')"class="btn btn-success shadow-sm rounded-pill"><i class="fa fa-print"></i>Print</button>
-                    <button type="button" onclick="addForm('{{ route('siswa.store') }}')" class="btn btn-primary shadow-sm rounded-pill"><i class="fa fa-plus"></i>Tambah</button>
-                   </div> 
-                </div>
+    <div class="section-body">
+        <div class="row">
 
-                <!-- Tabel -->
-                <div class="card-body">
-                            <table class="table table-striped text-nowrap" style="width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <td scope="col" style="width: 50px;">No</td>
-                                        <td scope="col">Nama</td>
-                                        <td scope="col">Jurusan</td>
-                                        <td scope="col">Asal Sekolah</td>
-                                        <td scope="col" style="width: 120px;">Aksi</td>
-                                    </tr>
-                                </thead>
-                            </table>
+            {{-- Data Siswa --}}
+            <div class="col-12 col-md-12 col-lg-12">
+                <div class="card">
+                    {{-- Judul --}}
+                    <div class="card-header">
+                        <div class="col-12 col-md-10 col-lg-10">
+                            <h4>Data Siswa</h4>
                         </div>
+                        <div class="col-12 col-md-2 col-lg-2">
+                            <button type="button" onclick="addForm('{{ route('siswa.store') }}')" class="btn btn-primary shadow-sm rounded-pill">
+                                    <i class="fa fa-plus"></i> Tambah
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Tabel --}}
+                    <div class="card-body" style="width: 100%;">
+                        <table class="table table-striped text-nowrap">
+                            <thead>
+                                <tr>
+                                    <td scope="col" style="width: 50px;">No</td>
+                                    <td scope="col">Nama</td>
+                                    <td scope="col">Jurusan</td>
+                                    <td scope="col">Jenis Kelamin</td>
+                                    <td scope="col">Email</td>
+                                    <td scope="col">NISN</td>
+                                    <td scope="col">Alamat</td>
+                                    <td scope="col" style="width: 84px;">Aksi</td>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+
+                </div>
             </div>
+
         </div>
-    </section>
-    
+    </div>
+</section>
+
 @include('siswa.form')
 
 @endsection
 
 @push('script')
-<script>
-    // Data Tables
-    let table;
-    $(function() {
-        table = $('.table').DataTable({
-            proccesing: true,
-            autowidth: false,
-            ajax: {
-                url: '{{ route('siswa.data') }}'
-            },
-            columns: [
-                {data: 'DT_RowIndex'},
-                {data: 'nama'},
-                {data: 'jurusan_id'},
-                {data: 'asal_sekolah'},
-                {data: 'aksi'}
-            ]
-        });
-    })
-    $('.table').on('submit', function(e){
+    <script>
+        // Data Tables
+        let table;
+
+        $(function() {
+            table = $('.table').DataTable({
+                proccesing: true,
+                autowidth: false,
+                ajax: {
+                    url: '{{ route('siswa.data') }}'
+                },
+                columns: [
+                    {data: 'DT_RowIndex'},
+                    {data: 'nama'},
+                    {data: 'jurusan_id'},
+                    {data: 'jenis_kelamin'},
+                    {data: 'email'},
+                    {data: 'nisn'},
+                    {data: 'alamat'},
+                    {data: 'aksi'}
+                ]
+            });
+        })
+
+        $('#modalForm').on('submit', function(e){
             if(! e.preventDefault()){
-                $.post($('.table form').attr('action'), $('.table form').serialize())
+                $.post($('#modalForm form').attr('action'), $('#modalForm form').serialize())
                 .done((response) => {
-                    $('.table form')[0].reset();
+                    $('#modalForm').modal('hide');
                     table.ajax.reload();
                     iziToast.success({
                         title: 'Sukses',
@@ -85,58 +103,50 @@
                     return;
                 })
             }
-    })
+        })
 
-    $('#modalForm').on('submit', function(e){
-        if(! e.preventDefault()){
-            $.post($('#modalForm form').attr('action'), $('#modalForm form').serialize())
-            .done((response) => {
-                $('#modalForm').modal('hide');
-                table.ajax.reload();
-                iziToast.success({
-                    title: 'Sukses',
-                    message: 'Data berhasil disimpan',
-                    position: 'topRight'
-                })
-            })
-            .fail((errors) => {
-                iziToast.error({
-                    title: 'Gagal',
-                    message: 'Data gagal disimpan',
-                    position: 'topRight'
-                })
-                return;
-            })
-        }
-    })
-
-    function addForm(url){
+        function addForm(url){
             $('#modalForm').modal('show');
-            $('#modalForm .modal-title').text('Tambah Data Siswa');
+            $('#modalForm .modal-title').text('Tambah Data Jurusan');
             $('#modalForm form')[0].reset();
+
             $('#modalForm form').attr('action', url);
             $('#modalForm [name=_method]').val('post');
-    }
+        }
 
-    function editData(url){
+        function pdf(url){
+        $('.form-siswa').attr('action', url).attr('target', '_blank').submit();
+        }
+
+        function editData(url){
             $('#modalForm').modal('show');
-            $('#modalForm .modal-title').text('Edit Data Siswa');
+            $('#modalForm .modal-title').text('Edit Data Jurusan');
+
             $('#modalForm form')[0].reset();
             $('#modalForm form').attr('action', url);
             $('#modalForm [name=_method]').val('put');
+
             $.get (url)
                 .done((response) => {
                     $('#modalForm [name=nama]').val(response.nama);
-                    $('#modalForm [name=kelas]').val(response.kelas);
-                    $('#modalForm [name=jurusan]').val(response.jurusan);
+                    $('#modalForm [name=jurusan_id]').val(response.jurusan_id);
+                    $('#modalForm [name=jenis_kelamin]').val(response.jenis_kelamin);
+                    $('#modalForm [name=agama]').val(response.agama);
+                    $('#modalForm [name=email]').val(response.email);
+                    $('#modalForm [name=telepon]').val(response.telepon);
+                    $('#modalForm [name=nisn]').val(response.nisn);
+                    $('#modalForm [name=tempat_lahir]').val(response.tempat_lahir);
+                    $('#modalForm [name=tanggal_lahir]').val(response.tanggal_lahir);
+                    $('#modalForm [name=alamat]').val(response.alamat);
                     $('#modalForm [name=asal_sekolah]').val(response.asal_sekolah);
+                    $('#modalForm [name=nama_wali]').val(response.nama_wali);
                     // console.log(response.nama);
                 })
                 .fail((errors) => {
                     alert('Tidak Dapat Menampilkan Data');
                     return;
                 })
-    }
+        }
 
         function deleteData(url){
             swal({
@@ -169,6 +179,7 @@
                 table.ajax.reload();
                 }
             });
+
         }
     </script>
 @endpush

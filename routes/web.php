@@ -5,7 +5,10 @@ use App\Http\Controllers\{
     AuthController,
     DashboardController,
     SiswaController,
-    JurusanController
+    JurusanController,
+    UserController,
+    SettingController,
+    ProfileController
 };
 
 Route::get('/', function () {
@@ -30,3 +33,14 @@ Route::resource('/siswa', SiswaController::class);
 // Route Jurusan
 Route::get('/jurusan/data', [JurusanController::class, 'data'])->name('jurusan.data');
 Route::resource('/jurusan', JurusanController::class);
+
+//Route Profil
+Route::get('/user', [UserController::class, 'index'])->name('user.index');    
+
+// Route PRINT
+Route::get('/siswa/pdf/{id}', [SiswaController::class, 'pdf'])->name('siswa.pdf');
+
+// route Setting
+Route::get('/setiing', [SettingController::class, 'index'])->name('setting.index');   
+
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');    

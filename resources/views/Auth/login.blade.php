@@ -98,7 +98,7 @@
                             Don't have an account? <a href="{{route('register')}}">Create One</a>
                         </div>
                         <div class="simple-footer">
-                            Copyright &copy; Anandito 2022
+                            Copyright &copy; Kiplidabest
                         </div>
                     </div>
                 </div>
